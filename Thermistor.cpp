@@ -1,22 +1,26 @@
 #include "Thermistor.h"
-#include <math.h> // Utilisation de math.h pour les calculs de log et pow
+#include <math.h> // For mathematical functions like log and pow
 
-// Constructeur
-Thermistor::Thermistor(double Rref, double R0, double Beta, unsigned samplingBitsNumber, double Vcc, double T0)
-    : Rref(Rref), R0(R0), Beta(Beta), samplingBitsNumber(samplingBitsNumber), Vcc(Vcc), T0(T0) {}
+// Constructor
+Thermistor::Thermistor(double referenceResistance, double fixedResistance, double betaCoefficient, 
+                       unsigned adcResolution, double supplyVoltage, double referenceTemperature)
+    : referenceResistance(referenceResistance), fixedResistance(fixedResistance), 
+      betaCoefficient(betaCoefficient), adcResolution(adcResolution), 
+      supplyVoltage(supplyVoltage), referenceTemperature(referenceTemperature) {}
 
-// Méthode pour calculer la température
+// Method to calculate temperature
 double Thermistor::getTemperature(double adc, char unit) {
-    // Étape 1 : Conversion de la valeur ADC en tension
-    double Vout = (adc / (pow(2.0, samplingBitsNumber) - 1.0)) * Vcc;
+    // Step 1: Convert ADC value to voltage
+    double voltageOut = (adc / (pow(2.0, adcResolution) - 1.0)) * supplyVoltage;
 
-    // Étape 2 : Calcul de la résistance de la thermistance (Rt)
-    double Rt = R0 * (Vcc / Vout - 1.0);
+    // Step 2: Calculate the resistance of the thermistor (Rt)
+    double thermistorResistance = fixedResistance * (supplyVoltage / voltageOut - 1.0);
 
-    // Étape 3 : Calcul de la température en Kelvin
-    double temperatureKelvin = 1.0 / (1.0 / T0 + (1.0 / Beta) * log(Rt / Rref));
+    // Step 3: Calculate the temperature in Kelvin
+    double temperatureKelvin = 1.0 / (1.0 / referenceTemperature + 
+                                      (1.0 / betaCoefficient) * log(thermistorResistance / referenceResistance));
 
-    // Étape 4 : Conversion selon l'unité demandée
+    // Step 4: Convert the temperature to the requested unit
     switch (unit) {
         case 'C': // Celsius
             return temperatureKelvin - ZERO_CELSIUS;

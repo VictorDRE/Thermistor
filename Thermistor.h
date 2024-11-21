@@ -1,39 +1,41 @@
 #ifndef THERMISTOR_H
 #define THERMISTOR_H
 
-// Constante pour la conversion Celsius <-> Kelvin
+// Constant for Celsius to Kelvin conversion
 const double ZERO_CELSIUS = 273.15;
 
 /**
- * @brief Classe Thermistor : Gère les calculs de température à partir d'une thermistance.
+ * @class Thermistor
+ * @brief A class to calculate the temperature using a thermistor and an ADC.
  */
 class Thermistor {
 private:
-    double Rref;               // Résistance à la température de référence (ohms)
-    double R0;                 // Résistance fixe dans le pont diviseur (ohms)
-    double Beta;               // Coefficient Beta de la thermistance
-    double T0;                 // Température de référence (Kelvin, typiquement 298.15K)
-    double Vcc;                // Tension d'alimentation (Volts)
-    unsigned samplingBitsNumber; // Résolution du convertisseur ADC (en bits)
+    double referenceResistance;    // Resistance of the thermistor at reference temperature (Ohms)
+    double fixedResistance;        // Fixed resistor value in the voltage divider (Ohms)
+    double betaCoefficient;        // Beta coefficient of the thermistor
+    double referenceTemperature;   // Reference temperature in Kelvin (typically 298.15 K)
+    double supplyVoltage;          // Voltage supply for the circuit (Volts)
+    unsigned adcResolution;        // Resolution of the ADC (in bits, e.g., 10 bits for Arduino UNO)
 
 public:
     /**
-     * @brief Constructeur de la classe Thermistor.
-     * @param Rref Résistance de la thermistance à la température de référence.
-     * @param R0 Résistance fixe utilisée dans le pont diviseur.
-     * @param Beta Coefficient Beta de la thermistance.
-     * @param samplingBitsNumber Résolution de l'ADC (en bits, ex : 10 pour Arduino UNO).
-     * @param Vcc Tension d'alimentation du circuit (par défaut : 5V).
-     * @param T0 Température de référence en Kelvin (par défaut : 298.15K).
+     * @brief Constructor to initialize the Thermistor class.
+     * @param referenceResistance Resistance of the thermistor at the reference temperature.
+     * @param fixedResistance Fixed resistor value in the voltage divider.
+     * @param betaCoefficient Beta coefficient of the thermistor.
+     * @param adcResolution ADC resolution (in bits, e.g., 10 bits).
+     * @param supplyVoltage Supply voltage for the circuit (default is 5.0 V).
+     * @param referenceTemperature Reference temperature in Kelvin (default is 298.15 K).
      */
-    Thermistor(double Rref, double R0, double Beta, unsigned samplingBitsNumber = 10, 
-               double Vcc = 5.0, double T0 = 298.15);
+    Thermistor(double referenceResistance, double fixedResistance, double betaCoefficient, 
+               unsigned adcResolution = 10, double supplyVoltage = 5.0, 
+               double referenceTemperature = 298.15);
 
     /**
-     * @brief Calcule la température en fonction de la valeur ADC mesurée.
-     * @param adc Valeur numérique obtenue via l'ADC (0 à 1023 pour une résolution de 10 bits).
-     * @param unit Unité de la température : 'K' pour Kelvin, 'C' pour Celsius, 'F' pour Fahrenheit.
-     * @return Température calculée dans l'unité spécifiée.
+     * @brief Calculate the temperature from the ADC value.
+     * @param adc ADC value (numeric value from 0 to 2^resolution - 1).
+     * @param unit Unit of the temperature: 'K' for Kelvin, 'C' for Celsius, 'F' for Fahrenheit.
+     * @return The calculated temperature in the specified unit.
      */
     double getTemperature(double adc, char unit = 'K');
 };
